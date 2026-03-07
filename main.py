@@ -7,7 +7,7 @@ def pretty_print_json(data,indent=2,sort_keys=False):
 
 def main():
     
-    iss_tracker = sat_api.satellite_tracker()
+    iss_tracker = sat_api.Satellite_Tracker()
     iss_tle = iss_tracker.get_tle(ISS_ID)
     pretty_print_json(iss_tle)
     
