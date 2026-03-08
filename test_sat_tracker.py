@@ -34,3 +34,22 @@ class TestSatTracker:
         assert result['tle'] == "1 25544U 98067A   26066.51273615  .00014539  00000-0  27602-3 0  9992\r\n2 25544  51.6318  83.1189 0008132 167.0679 193.0520 15.48507964555998" # pyright: ignore[reportOptionalSubscript]
 
         test_sat.s.get.assert_called_once()
+
+    def test_parse_tle(self):
+        tle = "1 25544U 98067A   26066.51273615  .00014539  00000-0  27602-3 0  9992\r\n2 25544  51.6318  83.1189 0008132 167.0679 193.0520 15.48507964555998"
+        test_sat = Satellite_Tracker()
+        res = test_sat.parse_tle(tle)
+        assert res['line1_num'] == '1'
+        assert res['sat_cat_num'] == '25544'
+        assert res['classification'] == 'U'
+        assert res['int_design_yr'] == '98'
+        assert res['int_design_launch_num'] == '067'
+        assert res['int_design_piece'] == 'A  '
+        assert res['epoch_yr'] == '26'
+        assert res['epoch_day'] == '066.51273615'
+        assert res['first_deriv_mean_motion'] == ' .00014539' # positive represented with whitespace/negative with "-"
+        assert res["second_deriv_mean_motion"] == '00000-0'
+        assert res['bstar'] == '27602-3'
+        assert res['ephemeris_type'] == '0'
+        assert res['ele_set_num'] == ' 999'
+        assert res['chksum'] == '2'
