@@ -1,10 +1,9 @@
 import pytest
 from sat_api import Satellite_Tracker
-from pytest_mock import MockerFixture  # Add this import
+from pytest_mock import MockerFixture
 
 class TestSatTracker:
 
-    
     def test_get_tle(self,mocker: MockerFixture):
         mock_tle_response = {
             "info": {
@@ -39,6 +38,8 @@ class TestSatTracker:
         tle = "1 25544U 98067A   26066.51273615  .00014539  00000-0  27602-3 0  9992\r\n2 25544  51.6318  83.1189 0008132 167.0679 193.0520 15.48507964555998"
         test_sat = Satellite_Tracker()
         res = test_sat.parse_tle(tle)
+        
+        # line 1
         assert res['line1_num'] == '1'
         assert res['sat_cat_num'] == '25544'
         assert res['classification'] == 'U'
@@ -52,4 +53,16 @@ class TestSatTracker:
         assert res['bstar'] == '27602-3'
         assert res['ephemeris_type'] == '0'
         assert res['ele_set_num'] == ' 999'
-        assert res['chksum'] == '2'
+        assert res['chksum1'] == '2'
+        
+        # line 2
+        assert res['line2_num'] == '2'
+        assert res['sat_cat_num2'] == '25544'
+        assert res['inclination'] == ' 51.6318'
+        assert res['rt_ascension'] == ' 83.1189'
+        assert res['eccentricity'] == '0008132'
+        assert res['arg_perigee'] == '167.0679'
+        assert res['mean_anomaly'] == '193.0520'
+        assert res['mean_motion'] == '15.48507964'
+        assert res['rev_at_epoch'] == '55599'
+        assert res['chksum2'] == '8'
