@@ -2,16 +2,21 @@ import pytest
 from sat_api import Satellite_Tracker
 from pytest_mock import MockerFixture
 
+@pytest.fixture
+def example_tle() -> str:
+    tle = "1 25544U 98067A   26066.51273615  .00014539  00000-0  27602-3 0  9992\r\n2 25544  51.6318  83.1189 0008132 167.0679 193.0520 15.48507964555998"
+    return tle
+
 class TestSatTracker:
 
-    def test_get_tle(self,mocker: MockerFixture):
+    def test_get_tle(self,example_tle,mocker: MockerFixture):
         mock_tle_response = {
             "info": {
             "satid": 25544,
             "satname": "SPACE STATION",
             "transactionscount": 2
             },
-            "tle": "1 25544U 98067A   26066.51273615  .00014539  00000-0  27602-3 0  9992\r\n2 25544  51.6318  83.1189 0008132 167.0679 193.0520 15.48507964555998"
+            "tle": example_tle
         }
 
         test_sat = Satellite_Tracker()
@@ -54,7 +59,7 @@ class TestSatTracker:
         assert res['ephemeris_type'] == '0'
         assert res['ele_set_num'] == ' 999'
         assert res['chksum1'] == '2'
-        
+
         # line 2
         assert res['line2_num'] == '2'
         assert res['sat_cat_num2'] == '25544'
@@ -66,3 +71,10 @@ class TestSatTracker:
         assert res['mean_motion'] == '15.48507964'
         assert res['rev_at_epoch'] == '55599'
         assert res['chksum2'] == '8'
+
+    def test_checkum_calc(self,example_tle):
+        test_sat = Satellite_Tracker()
+        res = test_sat.parse_tle(example_tle)
+        assert test_sat.tle_checksum(example_tle)[0] == 2
+        assert test_sat.tle_checksum(example_tle)[1] == 8
+

@@ -9,8 +9,8 @@ class Satellite_Tracker:
 
     def __init__(self):
         self.s = requests.Session()
-
-    def get_tle(self, sat_id:int):
+        
+    def get_tle(self, sat_id:int) -> dict|None:
         """Retrieve the Two Line Elements (TLE) for a satellite identified by NORAD id."""
         #Request: https://api.n2yo.com/rest/v1/satellite/tle/25544&apiKey=API_KEY
         try:
@@ -96,3 +96,23 @@ class Satellite_Tracker:
             }
 
         return tle_data
+
+    def tle_checksum(self, tle:str) -> list[int]:
+        """Calculates a modulo 10 checksum where a negative sign = 1 and the checksum only adds numbers"""
+
+        this_tle = tle.splitlines()
+        checksums:list = [None] * len(this_tle)
+
+        if not this_tle:
+            raise ValueError
+        
+        for i,line in enumerate(this_tle):
+            sum = 0
+            for c in line[:-1]: # remove the last char, this is the checksum itself
+                if c.isdigit():
+                    sum += int(c)
+                elif c=='-':
+                    sum += 1
+            checksum = sum%10
+            checksums[i]=checksum
+        return checksums
